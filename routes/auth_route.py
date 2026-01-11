@@ -3,6 +3,9 @@
 from flask import Blueprint,request
 from models.user import UserModel
 from database.db import db
+from security import secur_pass
+
+
 
 
 auth_router = Blueprint('auth', __name__, url_prefix='/auth')
@@ -15,12 +18,21 @@ def create_user():
         password=data['password']
         role=data['role']
 
-        try:
-            new_user=UserModel(email=email, password=password, role=role)
-            db.session.add(new_user)
-            db.session.commit()
-        except:
-            return "error"
+        user_exist=UserModel.query.filter_by(email=email).first()
+
+        if not user_exist: 
+
+            try:
+                new_user=UserModel(email=email, password=secur_pass.get_password_hash(password), role=role)
+                db.session.add(new_user)
+                db.session.commit()
+            except:
+                return "error"
+
+            return "create user successfully"
+        else:
+            return "email or pass is not correct"
+
 
 
 

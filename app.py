@@ -4,6 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 from database.db import db
 import pymysql
 from routes.auth_route import auth_router
+from models import user  # or wherever your User model is
+
 
 pymysql.install_as_MySQLdb()
 
@@ -17,6 +19,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 
 
+db = SQLAlchemy(app)
+
+# Create tables
+with app.app_context():
+    db.create_all()
+    print("Tables created successfully!")
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
 @app.route('/')
